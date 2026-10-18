@@ -1,0 +1,68 @@
+---
+- name: Create application directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - "{{ app_root }}"
+    - "{{ app_data_dir }}"
+    - "{{ app_source_dir }}"
+- name: Set persistent data directory ownership for the container user
+  ansible.builtin.file:
+    path: "{{ app_data_dir }}"
+    state: directory
+    owner: "10001"
+    group: "10001"
+    mode: "0750"
+- name: Copy application source and Dockerfile
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../app/{{ item }}"
+    dest: "{{ app_source_dir }}/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - app.py
+    - requirements.txt
+    - Dockerfile
+- name: Build Student Record API container image
+  community.docker.docker_image:
+    name: "{{ app_name }}"
+    tag: latest
+    source: build
+    build:
+      path: "{{ app_source_dir }}"
+    force_source: true
+- name: Run Student Record API container
+  community.docker.docker_container:
+    name: library-app
+    image: "{{ app_name }}:latest"
+    state: started
+    restart_policy: always
+    recreate: true
+    published_ports:
+      - "{{ app_port }}:8080"
+    volumes:
+      - "{{ app_data_dir }}:/data"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=3)\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+- name: Wait for application health endpoint
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ app_port }}/api/health"
+    method: GET
+    status_code: 200
+    return_content: true
+  register: health_result
+  retries: 10
+  delay: 3
+  until: health_result.status == 200
+- name: Show application health result
+  ansible.builtin.debug:
+    var: health_result.json

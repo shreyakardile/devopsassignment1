@@ -1,0 +1,10 @@
+---
+- name: Configure and deploy Student Record platform
+  hosts: library_servers
+  become: true
+  gather_facts: true
+  roles:
+    - common
+    - docker
+    - nginx
+    - library_app

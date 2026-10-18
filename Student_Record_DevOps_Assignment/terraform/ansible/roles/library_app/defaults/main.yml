@@ -1,0 +1,6 @@
+---
+app_name: student-record-api
+app_port: 8080
+app_root: /opt/student-record
+app_data_dir: /opt/student-record/data
+app_source_dir: /opt/student-record/source

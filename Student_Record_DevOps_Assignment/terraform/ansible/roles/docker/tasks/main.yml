@@ -1,0 +1,11 @@
+---
+- name: Install Docker Engine and Python Docker SDK
+  ansible.builtin.apt:
+    name: [docker.io, python3-docker]
+    state: present
+    update_cache: true
+- name: Ensure Docker service is enabled and started
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true

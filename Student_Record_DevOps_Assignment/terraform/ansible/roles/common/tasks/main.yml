@@ -1,0 +1,29 @@
+---
+- name: Refresh APT package cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+- name: Install common system utilities
+  ansible.builtin.apt:
+    name: [ca-certificates, curl, git, jq, python3, ufw]
+    state: present
+- name: Allow SSH through UFW
+  community.general.ufw:
+    rule: allow
+    port: "22"
+    proto: tcp
+- name: Allow HTTP through UFW
+  community.general.ufw:
+    rule: allow
+    port: "80"
+    proto: tcp
+- name: Allow direct application API port through UFW
+  community.general.ufw:
+    rule: allow
+    port: "8080"
+    proto: tcp
+- name: Enable UFW with default deny incoming
+  community.general.ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
