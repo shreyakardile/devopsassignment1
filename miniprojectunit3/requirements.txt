@@ -1,0 +1,4 @@
+# The offline demo runs with Python's standard library (no install required).
+# Flask can be used for the course's target stack when package installation is available:
+Flask>=3.0
+pytest>=8.0

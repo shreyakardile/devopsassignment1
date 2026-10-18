@@ -1,0 +1,10 @@
+test_add_student (test_app.StudentPlatformTests.test_add_student) ... ok
+test_duplicate_roll_number_rejected (test_app.StudentPlatformTests.test_duplicate_roll_number_rejected) ... ok
+test_health_endpoint (test_app.StudentPlatformTests.test_health_endpoint) ... ok
+test_homepage_and_csv_export (test_app.StudentPlatformTests.test_homepage_and_csv_export) ... ok
+test_seeded_student_records (test_app.StudentPlatformTests.test_seeded_student_records) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.519s
+
+OK
